@@ -123,7 +123,7 @@
  </head>
  <body>
             <div class="logo">
-                <img alt="ACV logo" src="C:\Users\user\Downloads\Без названия (9)-Photoroom.png"/>
+                <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
                 <h1>ACV</h1>
             </div>
             <div class="content">
@@ -152,7 +152,7 @@
             <div class="sidebar">
                 <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
                 <div class="menu">
-                    <a href="#">Главная</a>
+                    <a href="{{ url_for('home') }}">Главная</a>
                     <a href="{{ url_for('create') }}">Создать</a>
                     <a href="#">Архив</a>
                     <a href="#">Поиск</a>

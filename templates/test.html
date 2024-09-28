@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Видео список</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #9A89A6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 0 20px;
+        }
+        .sidebar {
+            background-color: #6D5D7A;
+            width: 200px;
+            height: 300px;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .sidebar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .sidebar .menu {
+            margin-top: 80px; /* Adjusted to make space for the profile picture */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
+        }
+         .scrolling-page {
+            position: absolute;
+            width: 1500px;
+            height: 745px;
+            direction: rtl;
+            overflow-y: auto;
+            top: 200px;
+            color: black;
+            z-index: 5;
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-grow: 1;
+        }
+        /* .card {
+            position: absolute;
+            width: 488px;
+            height: 673px;
+            z-index: -1;
+            cursor: pointer;
+        } */
+    </style>
+</head>
+<body>
+    <div class="scrolling-page">
+        <div class="logo">
+            <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
+                <h1>ACV</h1>
+        </div>
+    </div>
+    <div class="sidebar">
+        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">Главная</a>
+            <a href="{{ url_for('static') }}">Создать</a>
+            <a href="#">Архив</a>
+            <a href="#">Поиск</a>
+        </div>
+    </div>
+        <div class="content">
+        <!-- Цикл для отображения каждого видеофайла -->
+        {% for video in video_files %}
+            <div class="card">
+                <video width="320" height="240" controls>
+                    <source src="{{ url_for('static', filename='uploaded/' ~ video) }}" type="video/mp4">
+                    Ваш браузер не поддерживает тег video.
+                </video>
+                <p>{{ video }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

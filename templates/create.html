@@ -133,20 +133,20 @@ body {
         <div class="sidebar">
             <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
             <div class="menu">
-                <a href="#">Главная</a>
+                <a href="{{ url_for('home') }}">Главная</a>
                 <a href="#">Создать</a>
                 <a href="#">Архив</a>
                 <a href="#">Поиск</a>
             </div>
         </div>
 
-        <form action="{{ url_for('create') }}" method="POST" enctype="multipart/form-data"></form>
+        <form action="{{ url_for('create') }}" method="POST" enctype="multipart/form-data">
             <div class="upload_place">
                 <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/file-add-outline.svg') }}" width="50"/>
                     <h6>
-                        <input type="file" accept="video/*">
+                        <input type="file" accept="video/*" name="video">
                     </h6>
-                    <input type="submit" value="Отправить"> 
+                    <button type="submit" class="btn btn-primary btn-block">Отправить</button>
             </div>
         </form>
 </body>

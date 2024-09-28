@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 con = sqlite3.connect("users.db", check_same_thread=False)
 cur = con.cursor()
 
-UPLOAD_FOLDER = "uploaded"
+UPLOAD_FOLDER = "static/uploaded"
 ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov'}
 
 cur.execute("""CREATE TABLE IF NOT EXISTS users(
@@ -49,21 +49,36 @@ def home():
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
-
-    if 'video' not in request.files:
+    if request.method == 'POST':
+        # Проверка на наличие файла в запросе
+        if 'video' not in request.files:
             return redirect(request.url)
-    file = request.files['video']
+        
+        file = request.files['video']
 
-    if file.filename == '':
+        # Проверка на пустое имя файла
+        if file.filename == '':
             return redirect(request.url)
 
-    if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
+        # Проверка на допустимый тип файла
+        if file and allowed_file(file.filename):
+
+            filename = secure_filename(file.filename)  # Безопасное имя файла
+
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)  # Путь для сохранения файла
+            file.save(file_path)  # Сохранение файла на сервере
+            
+            video_files = []
+            for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+                if filename.endswith(('mp4', 'avi', 'mov','MOV','MP4','AVI')):  # Проверка допустимых расширений
+            
+                    video_files.append(filename)
 
             # Передача клипов в шаблон
-            return render_template('create.html')
+            return render_template('test.html', video_files=video_files)
 
     return render_template('create.html')
 
