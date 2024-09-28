@@ -122,98 +122,97 @@
   </style>
  </head>
  <body>
-    
-    <div class="logo">
-        <img alt="ACV logo" src="C:\Users\user\Downloads\Без названия (9)-Photoroom.png"/>
-        <h1>ACV</h1>
-    </div>
-    <div class="content">
-        <div class="card" onclick="swapVideos('video1', 'text1')">
-            <video id="video1" src="{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}"></video>
-            <p id="text1">{{name[0]}}<br/>{{hashtags[0]}}</p>
-            <div class="timeline">
-                <div class="timeline-progress" id="progress1"></div>
+    <form action="{{ url_for('home') }}" method="POST" enctype="multipart/form-data">
+            <div class="logo">
+                <img alt="ACV logo" src="C:\Users\user\Downloads\Без названия (9)-Photoroom.png"/>
+                <h1>ACV</h1>
             </div>
-        </div>
-        <div class="card center-card">
-            <video id="video2"  src="{{ url_for('static', filename='IMG_1309.MP4') }}" onclick=togglePlayPause></video>
-            <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
-            <div class="timeline">
-                <div class="timeline-progress" id="progress2"></div>
+            <div class="content">
+                <div class="card" onclick="swapVideos('video1', 'text1')">
+                    <video id="video1" src="{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}"></video>
+                    <p id="text1">{{name[0]}}<br/>{{hashtags[0]}}</p>
+                    <div class="timeline">
+                        <div class="timeline-progress" id="progress1"></div>
+                    </div>
+                </div>
+                <div class="card center-card">
+                    <video id="video2"  src="{{ url_for('static', filename='IMG_1309.MP4') }}" onclick=togglePlayPause></video>
+                    <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
+                    <div class="timeline">
+                        <div class="timeline-progress" id="progress2"></div>
+                    </div>
+                </div>
+                <div class="card" style="margin-right: 220px;" onclick="swapVideos('video3', 'text3')">
+                    <video id="video3" src="{{ url_for('static', filename='IMG_7705.MOV') }}"></video>
+                    <p id="text3">{{name[2]}}<br/>{{hashtags[2]}}</p>
+                    <div class="timeline">
+                        <div class="timeline-progress" id="progress3"></div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="card" style="margin-right: 220px;" onclick="swapVideos('video3', 'text3')">
-            <video id="video3" src="{{ url_for('static', filename='IMG_7705.MOV') }}"></video>
-            <p id="text3">{{name[2]}}<br/>{{hashtags[2]}}</p>
-            <div class="timeline">
-                <div class="timeline-progress" id="progress3"></div>
+            <div class="sidebar">
+                <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
+                <div class="menu">
+                    <a href="#">Главная</a>
+                    <a href="{{ url_for('create') }}">Создать</a>
+                    <a href="#">Архив</a>
+                    <a href="#">Поиск</a>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="sidebar">
-        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
-        <div class="menu">
-            <a href="#">Главная</a>
-            <a href="{{ url_for('create') }}">Создать</a>
-            <a href="#">Архив</a>
-            <a href="#">Поиск</a>
-        </div>
-    </div>
 
-    <script>
-        function updateProgress(video, progress) {
-            const duration = video.duration;
-            const currentTime = video.currentTime;
-            const percent = (currentTime / duration) * 100;
-            progress.style.width = percent + '%';
-        }
+            <script>
+                function updateProgress(video, progress) {
+                    const duration = video.duration;
+                    const currentTime = video.currentTime;
+                    const percent = (currentTime / duration) * 100;
+                    progress.style.width = percent + '%';
+                }
 
-        // Функция паузы/возобновления видео
-        function togglePlayPause() {
-            const video = document.getElementById('video2');
-            if (video.paused) {
-                video.play();  // Воспроизведение
-            } else {
-                video.pause(); // Пауза
-            }
-        }
+                // Функция паузы/возобновления видео
+                function togglePlayPause() {
+                    const video = document.getElementById('video2');
+                    if (video.paused) {
+                        video.play();  // Воспроизведение
+                    } else {
+                        video.pause(); // Пауза
+                    }
+                }
 
-        function swapVideos(videoId, textId) {
-            const centerVideo = document.getElementById('video2');
-            const sideVideo = document.getElementById(videoId);
-            const centerText = document.getElementById('text2');
-            const sideText = document.getElementById(textId);
+                function swapVideos(videoId, textId) {
+                    const centerVideo = document.getElementById('video2');
+                    const sideVideo = document.getElementById(videoId);
+                    const centerText = document.getElementById('text2');
+                    const sideText = document.getElementById(textId);
 
-            const videoFiles = [
-                'D:\\video\\Desktop 2024.03.12 - 21.24.25.01.mp4',
-                'D:\\video\\Grand Theft Auto V 2023.08.06 - 00.07.30.01.mp4',
-                'D:\\video\\Grand Theft Auto V 2024.01.08 - 22.42.28.01.mp4',
-                "D:\\video\\IMG_7705.MOV",
-                "D:\\video\\b449e328c7922f8e17051ab8cda00756.mp4"];
+                    const videoFiles = [
+                        "{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}",
+                        "{{ url_for('static', filename='IMG_1309.MP4') }}",
+                        "{{ url_for('static', filename='IMG_7705.MOV') }}"]
 
-            // Выбор случайного видео из списка
-            const randomVideoFile = videoFiles[Math.floor(Math.random() * videoFiles.length)];
+                    // Выбор случайного видео из списка
+                    const randomVideoFile = videoFiles[Math.floor(Math.random() * videoFiles.length)];
 
-            // Замена текста
-            const tempText = centerText.innerHTML;
-            centerText.innerHTML = sideText.innerHTML;
-            sideText.innerHTML = tempText;
+                    // Замена текста
+                    const tempText = centerText.innerHTML;
+                    centerText.innerHTML = sideText.innerHTML;
+                    sideText.innerHTML = tempText;
 
-            // Замена источников видео
-            const tempSrc = centerVideo.src;
-            centerVideo.src = sideVideo.src;
-            sideVideo.src = randomVideoFile;
+                    // Замена источников видео
+                    const tempSrc = centerVideo.src;
+                    centerVideo.src = sideVideo.src;
+                    sideVideo.src = randomVideoFile;
 
-            centerVideo.load();
-            sideVideo.load();
-            centerVideo.play();
-            
+                    centerVideo.load();
+                    sideVideo.load();
+                    centerVideo.play();
+                    
 
-            // Обновление прогресса для центрального видео
-            centerVideo.addEventListener('timeupdate', () => updateProgress(centerVideo, document.getElementById('progress2')));
-           
-        }
-    </script>
-  </script>
+                    // Обновление прогресса для центрального видео
+                    centerVideo.addEventListener('timeupdate', () => updateProgress(centerVideo, document.getElementById('progress2')));
+                
+                }
+            </script>
+        </script>
+    </form>
  </body>
 </html>
