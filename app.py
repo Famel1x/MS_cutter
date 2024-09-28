@@ -48,7 +48,7 @@ def home():
     return render_template("home.html", name=name, hashtags=hashtag)
 
 @app.route("/create", methods=["GET", "POST"])
-def load():
+def create():
 
     if 'video' not in request.files:
             return redirect(request.url)
@@ -63,7 +63,7 @@ def load():
             file.save(file_path)
 
             # Передача клипов в шаблон
-            return render_template('home.html')
+            return render_template('create.html')
 
     return render_template('create.html')
 
