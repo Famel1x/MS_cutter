@@ -26,6 +26,7 @@ app = Flask(__name__)
 app.secret_key = "1"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 # Главная страница
 @app.route("/")
 def home():
