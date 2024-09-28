@@ -128,21 +128,21 @@
     </div>
     <div class="content">
         <div class="card" onclick="swapVideos('video1', 'text1')">
-            <video id="video1" src="D:\video\b449e328c7922f8e17051ab8cda00756.mp4"></video>
+            <video id="video1" src="{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}"></video>
             <p id="text1">{{name[0]}}<br/>{{hashtags[0]}}</p>
             <div class="timeline">
                 <div class="timeline-progress" id="progress1"></div>
             </div>
         </div>
         <div class="card center-card">
-            <video id="video2" src="D:\video\IMG_7705.MOV" onclick=togglePlayPause></video>
+            <video id="video2"  src="{{ url_for('static', filename='IMG_1309.MP4') }}" onclick=togglePlayPause></video>
             <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
             <div class="timeline">
                 <div class="timeline-progress" id="progress2"></div>
             </div>
         </div>
         <div class="card" style="margin-right: 220px;" onclick="swapVideos('video3', 'text3')">
-            <video id="video3" src="D:\video\IMG_7705.MOV"></video>
+            <video id="video3" src="{{ url_for('static', filename='IMG_7705.MOV') }}"></video>
             <p id="text3">{{name[2]}}<br/>{{hashtags[2]}}</p>
             <div class="timeline">
                 <div class="timeline-progress" id="progress3"></div>
@@ -150,10 +150,10 @@
         </div>
     </div>
     <div class="sidebar">
-        <img alt="User profile picture" height="50" src="your-image-link" width="50"/>
+        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
         <div class="menu">
             <a href="#">Главная</a>
-            <a href="#">Создать</a>
+            <a href="{{ url_for('create') }}">Создать</a>
             <a href="#">Архив</a>
             <a href="#">Поиск</a>
         </div>
