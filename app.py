@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import sqlite3
 import os
 
+from flask import request, jsonify
+import shutil
+
 from werkzeug.utils import secure_filename
 
 con = sqlite3.connect("users.db", check_same_thread=False)
@@ -46,6 +49,19 @@ def home():
     print(name, hashtag)
 
     return render_template("home.html", name=name, hashtags=hashtag)
+
+@app.route('/accept/<filename>')
+def accept(filename):
+
+    return render_template('accept.html', filename=filename)
+
+@app.route('/accept_video', methods=['POST'])
+def accept_video():
+    filename = request.form['filename']
+    src_path = os.path.join('static', 'uploaded', filename)
+    dst_path = os.path.join('static', 'accepted_video', filename)
+    shutil.copy(src_path, dst_path)
+    return jsonify({'success': True})
 
 @app.route("/create", methods=["GET", "POST"])
 def create():

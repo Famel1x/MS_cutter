@@ -134,11 +134,13 @@
         <div class="content">
             {% for video in video_files %}
             <div class="card">
-                <video muted>
+                <a href="{{ url_for('accept', filename=video) }}">
+                <video>
                     <source src="{{ url_for('static', filename='uploaded/' ~ video) }}" type="video/mp4">
                     Ваш браузер не поддерживает тег video.
                 </video>
                 <p>{{ video }}</p> <!-- Наименование файла под видео -->
+            </a>
             </div>
             {% endfor %}
         </div>
