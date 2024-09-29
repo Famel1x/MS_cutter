@@ -1,0 +1,148 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Список полученных видео</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #9A89A6;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #6D5D7A;
+            width: 200px;
+            height: 300px;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .sidebar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .menu {
+            margin-top: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .scrolling-page {
+            width: calc(100% - 240px); /* Учитываем ширину меню */
+            margin-right: 240px; /* Отступ для меню */
+            padding-top: 40px;
+            overflow-y: auto;
+            height: 90vh; /* Высота области контента */
+            padding-right: 20px;
+        }
+
+        .content {
+            display: flex;
+            top: 10px;
+            justify-content: space-between; /* Равномерное распределение */
+            flex-wrap: wrap; /* Перенос карточек на новые строки */
+            gap: 20px; /* Расстояние между карточками */
+            padding: 20px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+        }
+
+        .card {
+            background-color: #6D5D7A;
+            border-radius: 20px;
+            flex-basis: calc(50% - 10px); /* Устанавливаем ширину карточек 50% минус отступ */
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            color: white;
+            cursor: default;
+            overflow: hidden;
+        }
+
+        .card video {
+            width: 100%;
+            height: auto; /* Сохраняем пропорции видео */
+            object-fit: cover;
+            pointer-events: none; /* Отключаем возможность клика */
+        }
+
+        .card p {
+            margin-top: 10px;
+            font-size: 14px; /* Уменьшаем текст */
+            text-align: center;
+            word-wrap: break-word; /* Чтобы длинные названия файлов переносились */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">
+        <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
+        <h1>ACV</h1>
+    </div>
+
+    <div class="sidebar">
+        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">Главная</a>
+            <a href="{{ url_for('create') }}">Создать</a>
+            <a href="#">Архив</a>
+            <a href="#">Поиск</a>
+        </div>
+    </div>
+    
+
+    <div class="scrolling-page">
+        <div class="content">
+            {% for video in video_files %}
+            <div class="card">
+                <video muted>
+                    <source src="{{ url_for('static', filename=video[0]) }}" type="video/mp4">
+                    Ваш браузер не поддерживает тег video.
+                </video>
+                <p>{{ video[1] }}</p> <!-- Наименование файла под видео -->
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
