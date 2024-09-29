@@ -91,18 +91,7 @@ def cut_video(video_path, question_answer_segments):
     
     # Обрезаем видео до вертикального формата (9:16), например, до 1080x1920
     # Получаем ширину и высоту оригинального видео
-    video_width, video_height = video.size
-    target_width = 1080  # Целевая ширина для вертикального видео
-    target_height = 1920  # Целевая высота для вертикального видео
 
-    # Обрезаем по центру, чтобы сохранить вертикальное видео
-    vertical_video = crop(
-        video,
-        width=target_width,  # Ширина после обрезки
-        height=target_height,  # Высота после обрезки
-        x_center=video_width / 2,  # Центрируем по горизонтали
-        y_center=video_height / 2  # Центрируем по вертикали
-    )
     
     clip_count = 0
     i = 0
