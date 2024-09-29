@@ -118,7 +118,6 @@ def create():
             for filename in os.listdir(app.config['UPLOAD_FOLDER']):
                 if filename.endswith(('mp4', 'avi', 'mov','MOV','MP4','AVI')):  # Проверка допустимых расширений
 
-                    sleep(340)
             
                     video_files.append(filename)
 
