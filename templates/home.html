@@ -1,10 +1,8 @@
 <html>
- <head>
-  <title>
-   Главное меню
-  </title>
-  <style>
-   body {
+<head>
+    <title>Главное меню</title>
+    <style>
+        body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #9A89A6;
@@ -39,7 +37,7 @@
             left: 10px;
         }
         .sidebar .menu {
-            margin-top: 80px; /* Adjusted to make space for the profile picture */
+            margin-top: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -94,6 +92,7 @@
             right: 0;
             height: 5px;
             background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
         }
         .timeline-progress {
             height: 100%;
@@ -119,98 +118,126 @@
             z-index: -1;
             cursor: pointer;
         }
-  </style>
- </head>
- <body>
-            <div class="logo">
-                <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
-                <h1>ACV</h1>
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
+        <h1>ACV</h1>
+    </div>
+    <div class="content">
+        <div class="card" onclick="swapVideos('video1', 'text1')">
+            <video id="video1" src="{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}"></video>
+            <p id="text1">{{name[0]}}<br/>{{hashtags[0]}}</p>
+            <div class="timeline">
+                <div class="timeline-progress" id="progress1"></div>
             </div>
-            <div class="content">
-                <div class="card" onclick="swapVideos('video1', 'text1')">
-                    <video id="video1" src="{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}"></video>
-                    <p id="text1">{{name[0]}}<br/>{{hashtags[0]}}</p>
-                    <div class="timeline">
-                        <div class="timeline-progress" id="progress1"></div>
-                    </div>
-                </div>
-                <div class="card center-card">
-                    <video id="video2"  src="{{ url_for('static', filename='IMG_1309.MP4') }}" onclick=togglePlayPause></video>
-                    <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
-                    <div class="timeline">
-                        <div class="timeline-progress" id="progress2"></div>
-                    </div>
-                </div>
-                <div class="card" style="margin-right: 220px;" onclick="swapVideos('video3', 'text3')">
-                    <video id="video3" src="{{ url_for('static', filename='IMG_7705.MOV') }}"></video>
-                    <p id="text3">{{name[2]}}<br/>{{hashtags[2]}}</p>
-                    <div class="timeline">
-                        <div class="timeline-progress" id="progress3"></div>
-                    </div>
-                </div>
+        </div>
+        <div class="card center-card" onclick="togglePlayPause()">
+            <video id="video2" src="{{ url_for('static', filename='IMG_1309.MP4') }}"></video>
+            <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
+            <div class="timeline" id="timeline2">
+                <div class="timeline-progress" id="progress2"></div>
             </div>
-            <div class="sidebar">
-                <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
-                <div class="menu">
-                    <a href="{{ url_for('home') }}">Главная</a>
-                    <a href="{{ url_for('create') }}">Создать</a>
-                    <a href="#">Архив</a>
-                    <a href="#">Поиск</a>
-                </div>
+        </div>
+        <div class="card" style="margin-right: 220px;" onclick="swapVideos('video3', 'text3')">
+            <video id="video3" src="{{ url_for('static', filename='IMG_7705.MOV') }}"></video>
+            <p id="text3">{{name[2]}}<br/>{{hashtags[2]}}</p>
+            <div class="timeline">
+                <div class="timeline-progress" id="progress3"></div>
             </div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">Главная</a>
+            <a href="{{ url_for('create') }}">Создать</a>
+            <a href="#">Архив</a>
+            <a href="#">Поиск</a>
+        </div>
+    </div>
 
-            <script>
-                function updateProgress(video, progress) {
-                    const duration = video.duration;
-                    const currentTime = video.currentTime;
-                    const percent = (currentTime / duration) * 100;
-                    progress.style.width = percent + '%';
-                }
+    <script>
+        function updateProgress(video, progress) {
+            const duration = video.duration;
+            const currentTime = video.currentTime;
+            const percent = (currentTime / duration) * 100;
+            progress.style.width = percent + '%';
+        }
 
-                // Функция паузы/возобновления видео
-                function togglePlayPause() {
-                    const video = document.getElementById('video2');
-                    if (video.paused) {
-                        video.play();  // Воспроизведение
-                    } else {
-                        video.pause(); // Пауза
-                    }
-                }
+        // Функция паузы/возобновления видео
+        function togglePlayPause() {
+            const video = document.getElementById('video2');
+            if (video.paused) {
+                video.play();  // Воспроизведение
+            } else {
+                video.pause(); // Пауза
+            }
+        }
 
-                function swapVideos(videoId, textId) {
-                    const centerVideo = document.getElementById('video2');
-                    const sideVideo = document.getElementById(videoId);
-                    const centerText = document.getElementById('text2');
-                    const sideText = document.getElementById(textId);
+        // Перемотка видео по щелчку на таймлайне
+        const timeline = document.getElementById('timeline2');
+        const video = document.getElementById('video2');
 
-                    const videoFiles = [
-                        "{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}",
-                        "{{ url_for('static', filename='IMG_1309.MP4') }}",
-                        "{{ url_for('static', filename='IMG_7705.MOV') }}"]
+        timeline.addEventListener('mousedown', (event) => {
+            const timelineRect = timeline.getBoundingClientRect();
+            const x = event.clientX - timelineRect.left; // Позиция курсора относительно таймлайна
+            const percent = x / timelineRect.width; // Процент от длины таймлайна
+            video.currentTime = percent * video.duration; // Установка времени воспроизведения
+        });
 
-                    // Выбор случайного видео из списка
-                    const randomVideoFile = videoFiles[Math.floor(Math.random() * videoFiles.length)];
+        // Отслеживание перемещения мыши для перемотки
+        let isScrubbing = false;
 
-                    // Замена текста
-                    const tempText = centerText.innerHTML;
-                    centerText.innerHTML = sideText.innerHTML;
-                    sideText.innerHTML = tempText;
+        timeline.addEventListener('mousedown', () => {
+            isScrubbing = true;
+        });
 
-                    // Замена источников видео
-                    const tempSrc = centerVideo.src;
-                    centerVideo.src = sideVideo.src;
-                    sideVideo.src = randomVideoFile;
+        window.addEventListener('mouseup', () => {
+            isScrubbing = false;
+        });
 
-                    centerVideo.load();
-                    sideVideo.load();
-                    centerVideo.play();
-                    
+        window.addEventListener('mousemove', (event) => {
+            if (isScrubbing) {
+                const timelineRect = timeline.getBoundingClientRect();
+                const x = event.clientX - timelineRect.left; // Позиция курсора относительно таймлайна
+                const percent = Math.min(Math.max(x / timelineRect.width, 0), 1); // Процент от длины таймлайна
+                video.currentTime = percent * video.duration; // Установка времени воспроизведения
+            }
+        });
 
-                    // Обновление прогресса для центрального видео
-                    centerVideo.addEventListener('timeupdate', () => updateProgress(centerVideo, document.getElementById('progress2')));
-                
-                }
-            </script>
-        </script>
- </body>
+        function swapVideos(videoId, textId) {
+            const centerVideo = document.getElementById('video2');
+            const sideVideo = document.getElementById(videoId);
+            const centerText = document.getElementById('text2');
+            const sideText = document.getElementById(textId);
+
+            const videoFiles = [
+                "{{ url_for('static', filename='b449e328c7922f8e17051ab8cda00756.mp4') }}",
+                "{{ url_for('static', filename='IMG_1309.MP4') }}",
+                "{{ url_for('static', filename='IMG_7705.MOV') }}"];
+
+            // Выбор случайного видео из списка
+            const randomVideoFile = videoFiles[Math.floor(Math.random() * videoFiles.length)];
+
+            // Замена текста
+            const tempText = centerText.innerHTML;
+            centerText.innerHTML = sideText.innerHTML;
+            sideText.innerHTML = tempText;
+
+            // Замена источников видео
+            const tempSrc = centerVideo.src;
+            centerVideo.src = sideVideo.src;
+            sideVideo.src = randomVideoFile;
+
+            centerVideo.load();
+            sideVideo.load();
+            centerVideo.play();
+
+            // Обновление прогресса для центрального видео
+            centerVideo.addEventListener('timeupdate', () => updateProgress(centerVideo, document.getElementById('progress2')));
+        }
+    </script>
+</body>
 </html>

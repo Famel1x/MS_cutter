@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Видео список</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Главное меню</title>
     <style>
         body {
             margin: 0;
@@ -41,7 +39,7 @@
             left: 10px;
         }
         .sidebar .menu {
-            margin-top: 80px; /* Adjusted to make space for the profile picture */
+            margin-top: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -55,16 +53,6 @@
             text-align: center;
             width: 100%;
         }
-         .scrolling-page {
-            position: absolute;
-            width: 1500px;
-            height: 745px;
-            direction: rtl;
-            overflow-y: auto;
-            top: 200px;
-            color: black;
-            z-index: 5;
-        }
         .content {
             display: flex;
             justify-content: center;
@@ -72,43 +60,90 @@
             gap: 20px;
             flex-grow: 1;
         }
-        /* .card {
+        .card {
+            background-color: #6D5D7A;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 300px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: white;
+            text-align: left;
+            position: relative;
+            cursor: pointer;
+        }
+        .card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card p {
             position: absolute;
-            width: 488px;
-            height: 673px;
+            bottom: 20px;
+            left: 10px;
+            right: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        .timeline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .timeline-progress {
+            height: 100%;
+            background: #fff;
+            width: 0;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        .logo img {
+            width: 150px;
+            height: 150px;
+            margin-right: 10px;
+        }
+        .center-card {
+            width: 500px;
+            height: 730px;
             z-index: -1;
             cursor: pointer;
-        } */
+        }
     </style>
 </head>
 <body>
-    <div class="scrolling-page">
-        <div class="logo">
-            <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
-                <h1>ACV</h1>
-        </div>
+    <div class="logo">
+        <img alt="ACV logo" src="{{ url_for('static', filename='logo/logo.png') }}"/>
+        <h1>ACV</h1>
     </div>
-    <div class="sidebar">
-        <img alt="User profile picture" height="50" src="{{ url_for('static', filename='logo/user_photo.jpg') }}" width="50"/>
-        <div class="menu">
-            <a href="{{ url_for('home') }}">Главная</a>
-            <a href="{{ url_for('static') }}">Создать</a>
-            <a href="#">Архив</a>
-            <a href="#">Поиск</a>
-        </div>
-    </div>
-        <div class="content">
-        <!-- Цикл для отображения каждого видеофайла -->
-        {% for video in video_files %}
-            <div class="card">
-                <video width="320" height="240" controls>
-                    <source src="{{ url_for('static', filename='uploaded/' ~ video) }}" type="video/mp4">
-                    Ваш браузер не поддерживает тег video.
-                </video>
-                <p>{{ video }}</p>
+    <div class="content">
+        <div class="card center-card">
+            <video id="video2" src="{{ url_for('static', filename='uploaded/b449e328c7922f8e17051ab8cda00756.mp4') }}" onclick="togglePlayPause()"></video>
+            <p id="text2">{{name[1]}}<br/>{{hashtags[1]}}</p>
+            <div class="timeline">
+                <div class="timeline-progress" id="progress2"></div>
             </div>
-            {% endfor %}
         </div>
     </div>
+
+    <script>
+        function togglePlayPause() {
+                const video = document.getElementById('video2');
+                if (video.paused) {
+                    video.play();  // Воспроизведение
+                } else {
+                    video.pause(); // Пауза
+                }
+            }
+    </script>
 </body>
-</html>

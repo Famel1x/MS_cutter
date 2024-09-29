@@ -78,7 +78,7 @@ def create():
                     video_files.append(filename)
 
             # Передача клипов в шаблон
-            return render_template('test.html', video_files=video_files)
+            return render_template('Shorts_List.html', video_files=video_files)
 
     return render_template('create.html')
 
