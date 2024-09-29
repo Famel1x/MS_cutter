@@ -1,103 +1,100 @@
+import moviepy.editor as mp
+from moviepy.video.tools.subtitles import SubtitlesClip
+from moviepy.video.VideoClip import TextClip
+import whisper
+import pysrt
 import os
-from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
-from tqdm import tqdm
-import re
 
-def split_text_into_sentences(text):
-    """
-    Разделяет текст на предложения.
-    """
-    sentences = re.split(r'(?<=[.!?]) +', text)
-    return sentences
 
-def clean_text(text):
-    """
-    Очищает текст от ненужных символов.
-    """
-    # Удаляем все не-русские и не-английские символы, кроме основных знаков препинания
-    clean_text = re.sub(r'[^а-яА-ЯёЁa-zA-Z0-9\s,.!?]', '', text)
-    clean_text = re.sub(r'\s+', ' ', clean_text).strip()
-    return clean_text
+# Функция для извлечения аудио из видео
+def extract_audio(video_path):
+    video = mp.VideoFileClip(video_path)
+    audio_path = video_path.replace('.mp4', '.wav')
+    video.audio.write_audiofile(audio_path)
+    return audio_path
 
-def add_subtitles_to_video(video_path, subtitle_text, output_path, fontsize=24, color='white', bg_color='black', margin=10):
-    """
-    Добавляет субтитры к видео.
+# Функция для распознавания речи с помощью Whisper и генерации субтитров
+def transcribe_audio_to_srt(audio_path, srt_output_path):
+    model = whisper.load_model("small")
+    result = model.transcribe(audio_path, language="ru")
+    segments = result['segments']
 
-    :param video_path: Путь к исходному видео.
-    :param subtitle_text: Текст субтитров.
-    :param output_path: Путь для сохранения видео с субтитрами.
-    :param fontsize: Размер шрифта субтитров.
-    :param color: Цвет текста субтитров.
-    :param bg_color: Цвет фона субтитров.
-    :param margin: Отступ от нижней части видео.
-    """
-    # Разделяем текст на предложения
-    sentences = split_text_into_sentences(subtitle_text)
-    num_sentences = len(sentences)
+    # Создаём файл .srt
+    with open(srt_output_path, "w", encoding="utf-8") as srt_file:
+        for i, seg in enumerate(segments):
+            start = seg['start']
+            end = seg['end']
+            text = seg['text']
+
+            # Преобразование времени в формат SRT
+            def format_time(seconds):
+                hours, remainder = divmod(seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                milliseconds = int((seconds - int(seconds)) * 1000)
+                return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02},{milliseconds:03}"
+
+            srt_file.write(f"{i + 1}\n")
+            srt_file.write(f"{format_time(start)} --> {format_time(end)}\n")
+            srt_file.write(f"{text}\n\n")
+
+    print(f"Субтитры сохранены в: {srt_output_path}")
+
+# Функция для чтения субтитров из SRT файла
+def read_subtitles(srt_file):
+    subtitles = pysrt.open(srt_file)
     
-    # Загружаем видео
-    video = VideoFileClip(video_path)
-    duration = video.duration
+    # Возвращаем список пар (время начала, текст)
+    return [(sub.start.ordinal / 1000, sub.text) for sub in subtitles]
 
-    if num_sentences == 0:
-        print(f"No subtitles found for {video_path}")
-        return
+# Функция для создания клипа с отображением субтитров
+def add_subtitles_to_video(video_path, srt_file, output_path):
+    # Чтение видеофайла
+    video = mp.VideoFileClip(video_path)
 
-    # Рассчитываем длительность каждого субтитра
-    subtitle_duration = duration / num_sentences
+    # Чтение субтитров
+    subtitles = read_subtitles(srt_file)
 
-    # Создаем текстовые клипы для субтитров
-    subtitle_clips = []
-    for i, sentence in enumerate(sentences):
-        start = i * subtitle_duration
-        end = (i + 1) * subtitle_duration
+    # Проверка, пуст ли список субтитров
+    if not subtitles:
+        raise ValueError("Список субтитров пуст. Проверьте файл .srt.")
 
-        txt_clip = (TextClip(sentence, fontsize=fontsize, color=color, font="Arial", method='caption', size=(video.w*0.8, None))
-                    .set_position(('center', video.h - fontsize - margin))
-                    .set_start(start)
-                    .set_duration(subtitle_duration)
-                    .on_color(color=bg_color, col_opacity=0.6, padding=10))
-        
-        subtitle_clips.append(txt_clip)
+    # Функция для создания текстового клипа для каждого субтитра
+    def subtitle_generator(txt):
+        return TextClip(txt, font='Arial', fontsize=40, color='white', bg_color='black').on_color(col_opacity=0.6)
+
+    # Создание клипа субтитров (используем только время начала и текст)
+    subs = SubtitlesClip(subtitles)
+
+    # Наложение субтитров на видео
+    video_with_subs = mp.CompositeVideoClip([video, subs.set_position(('center', 'bottom'))])
+
+    # Сохранение нового видео
+    video_with_subs.write_videofile(output_path, codec='libx264', fps=video.fps)
+    print(f"Видео с субтитрами сохранено в: {output_path}")
+
+# Основная функция: извлекаем аудио, распознаём речь, создаём субтитры и накладываем их на видео
+def process_video_with_subtitles(video_path):
+    audio_path = extract_audio(video_path)
     
-    # Объединяем видео и субтитры
-    final = CompositeVideoClip([video, *subtitle_clips])
+    # Путь для временного SRT файла
+    srt_output_path = video_path.replace('.mp4', '.srt')
 
-    # Сохраняем видео с субтитрами
-    final.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    # Генерация субтитров
+    transcribe_audio_to_srt(audio_path, srt_output_path)
 
-def process_videos_with_subtitles(videos_dir, subtitles_dir, output_dir):
-    """
-    Обрабатывает все видео в директории, добавляя к ним субтитры.
+    # Создание видео с наложенными субтитрами
+    output_video_path = video_path.replace('.mp4', '_with_subtitles.mp4')
+    add_subtitles_to_video(video_path, srt_output_path, output_video_path)
 
-    :param videos_dir: Директория с видео.
-    :param subtitles_dir: Директория с текстовыми файлами субтитров (с тем же именем, но .txt).
-    :param output_dir: Директория для сохранения видео с субтитрами.
-    """
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    
-    video_files = [f for f in os.listdir(videos_dir) if f.endswith(('.mp4', '.avi', '.mov', '.mkv'))]
-    
-    for video_file in tqdm(video_files, desc="Adding subtitles to videos"):
-        video_path = os.path.join(videos_dir, video_file)
-        subtitle_file = os.path.splitext(video_file)[0] + '.txt'
-        subtitle_path = os.path.join(subtitles_dir, subtitle_file)
-        
-        if not os.path.exists(subtitle_path):
-            print(f"Subtitle file not found for {video_file}, skipping.")
-            continue
-        
-        with open(subtitle_path, 'r', encoding='utf-8') as f:
-            subtitle_text = f.read()
-        
-        output_path = os.path.join(output_dir, f"subtitled_{video_file}")
-        add_subtitles_to_video(video_path, subtitle_text, output_path)
+    # Удаление временного аудио файла
+    if os.path.exists(audio_path):
+        os.remove(audio_path)
 
+    # Удаление временного файла субтитров
+    if os.path.exists(srt_output_path):
+        os.remove(srt_output_path)
+
+# Пример использования:
 if __name__ == "__main__":
-    # Пример использования
-    videos_directory = "clips"            # Директория с видео файлами
-    subtitles_directory = "subtitles"      # Директория с текстовыми файлами субтитров
-    output_directory = "clips_with_subtitles"  # Директория для сохранения видео с субтитрами
-
-    process_videos_with_subtitles(videos_directory, subtitles_directory, output_directory)
+    video_path = "output_clips\clip_1.mp4"  # Укажите путь к вашему видео
+    process_video_with_subtitles(video_path)
