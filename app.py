@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import sqlite3
 import os
 
+from time import sleep
+
 from flask import request, jsonify
 import shutil
 
@@ -63,6 +65,31 @@ def accept_video():
     shutil.copy(src_path, dst_path)
     return jsonify({'success': True})
 
+@app.route("/archive", methods=["GET", "POST"])
+def archive():
+    path = app.config['UPLOAD_FOLDER']
+    files = os.listdir(path=path)
+    full_path = []
+    for file in files:
+        full_path.append(os.path.join(path, file))
+    print(full_path)
+    video_files=[]
+    for path in full_path:
+        video_files.append(path)
+    return render_template("archive.html", video_files=full_path)
+
+@app.route('/get_video_files', methods=['GET'])
+def get_video_files():
+    video_folder = os.path.join(app.static_folder, 'accepted_video')
+    video_files = []
+
+    # Получаем список файлов в директории
+    for filename in os.listdir(video_folder):
+        if filename.endswith(".mp4"):  # Выбираем только видеофайлы (mp4)
+            video_files.append(url_for('static', filename=f'accepted_video/{filename}'))
+    
+    return jsonify(video_files)
+
 @app.route("/create", methods=["GET", "POST"])
 def create():
     if request.method == 'POST':
@@ -90,6 +117,8 @@ def create():
             video_files = []
             for filename in os.listdir(app.config['UPLOAD_FOLDER']):
                 if filename.endswith(('mp4', 'avi', 'mov','MOV','MP4','AVI')):  # Проверка допустимых расширений
+
+                    sleep(340)
             
                     video_files.append(filename)
 
